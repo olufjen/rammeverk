@@ -5,6 +5,24 @@
         <artifactId>rammeverk</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+        <properties>
+          <java.version>21</java.version>
+         <maven.compiler.source>21</maven.compiler.source>
+         <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version> <!-- Use a recent version -->
+<!--                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>       -->
+            </plugin>
+        </plugins>
+    </build>
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.kunnskapssenteret</groupId>
     <artifactId>rammeverk_web</artifactId>
