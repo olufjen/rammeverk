@@ -12,6 +12,9 @@ import no.naks.rammeverk.mailer.Mailer;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.impl.JobDetailImpl;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -43,29 +46,32 @@ public class EmailScheduler  {
 	protected void startService(Mailer mailSender,String language, String type, String setSchedule, String jobName)throws SchedulerException, ParseException {
 		Log log = LogFactory.getLog(EmailScheduler.class);
 		Date date = new Date();
-		
+		JobKey jobKey = new JobKey(jobName, jobName);
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-		JobDetail jobDetail = new JobDetail();
-		JobDetail job = new JobDetail();
-		Trigger trigger= new CronTrigger() ;
-		job =scheduler.getJobDetail(jobName,jobName);
+		JobDetail jobDetail = new JobDetailImpl();
+		JobDetail job = new JobDetailImpl();
+		Trigger trigger= new CronTriggerImpl() ;
+		job =scheduler.getJobDetail(jobKey);
 		if(job!=null){
-		    if(job.getName().equals(jobName)){
-				scheduler.deleteJob(jobName, jobName);
+		    if(job.getKey().getName().equals(jobName)){
+				scheduler.deleteJob(jobKey);
 				log.info(jobName + " is deleted");
 		    }	
 		}
-       jobDetail.setName(jobName);
-	   jobDetail.setGroup(jobName);
-		trigger.setName(jobName);
-		jobDetail.setJobClass(EmailReportJob.class); // Parametriseres !!!
+
+		/*
+		 * jobDetail.setName(jobName); jobDetail.setGroup(jobName);
+		 * trigger.setName(jobName); jobDetail.setJobClass(EmailReportJob.class); //
+		 * Parametriseres !!!
+		 */	
 		if (mailSender != null)
 			jobDetail.getJobDataMap().put("mailSender",mailSender);
 		jobDetail.getJobDataMap().put("language", language);
 		jobDetail.getJobDataMap().put("type", type);
 		if (mailReminder != null)
 			jobDetail.getJobDataMap().put("mailReminder",mailReminder);
-		((CronTrigger) trigger).setCronExpression(setSchedule);
+
+//		((CronTrigger) trigger).setCronExpression(setSchedule);
 		scheduler.scheduleJob(jobDetail,trigger);
 	//	List jobber = scheduler.getCurrentlyExecutingJobs();
 		log.info(jobName + " email scheduler time is set at "+setSchedule);
